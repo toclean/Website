@@ -1,10 +1,10 @@
-import express from 'express'
-import bodyParser from 'body-parser'
-import https, { RequestOptions } from 'https'
+import express from 'express';
+import bodyParser from 'body-parser';
+import https, { RequestOptions } from 'https';
 
 const { apiKey }: {apiKey: string} = require('./config.json');
 
-const url = "http://api.openweathermap.org/data/2.5/weather";
+const url = 'http://api.openweathermap.org/data/2.5/weather';
 
 const app = express();
 
@@ -18,7 +18,6 @@ app.get('/', function (req, res) {
 
 app.post('/', function (req, res) {
     res.render('index.ejs');
-    console.log('first')
     GetWeather(req.body.city);
 })
 
@@ -30,31 +29,32 @@ app.listen(3000, function () {
  * Function that will get the weather information returned by the api
  */
 function GetWeather(city: string)
-{
+{   
+    let responseString = '';
+
     let options: RequestOptions =
     {
         host: 'api.openweathermap.org',
-        path: `/data/2.5/weather?q=${city}${apiKey}`,
+        path: `/data/2.5/weather?q=${city}&APPID=${apiKey}`,
         method: 'GET',
         port: 443
     };
 
     try
     {
-        console.log('asdhasd')
-        var req = https.request(options, function(res) {
-            console.log('thing')
+        var req = https.request(options, (res) => 
+        {
             res.setEncoding('utf-8');
         
-            let responseString = '';
-        
-            res.on('data', function(data) {
+            res.on('data', (data) =>
+            {
                 responseString += data;
             });
         
-            res.on('end', function() {
-                console.log(responseString);
+            res.on('end', () =>
+            {
                 let responseObject = JSON.parse(responseString);
+                document.write(KelvinToF(responseObject.main.temp).toString());
             });
         });
 
@@ -64,4 +64,9 @@ function GetWeather(city: string)
     {
         console.log(e);
     }
+}
+
+function KelvinToF(kelvin: string): number
+{
+    return parseFloat(((parseFloat(kelvin) * (9/5)) - 459.67).toFixed(2));
 }
