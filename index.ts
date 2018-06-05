@@ -54,7 +54,9 @@ function GetWeather(city: string)
             res.on('end', () =>
             {
                 let responseObject = JSON.parse(responseString);
-                document.write(KelvinToF(responseObject.main.temp).toString());
+                console.log(`City: ${responseObject.name}`);
+                console.log(`Country: ${responseObject.sys.country}`);
+                console.log('Temperature: ' + KelvinToF(responseObject.main.temp).toString() + ' F');
             });
         });
 
