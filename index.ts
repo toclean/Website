@@ -2,8 +2,9 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import https, { RequestOptions } from 'https'
 
+const { apiKey }: {apiKey: string} = require('./config.json');
+
 const url = "http://api.openweathermap.org/data/2.5/weather";
-const apiKey = '';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get('/', function (req, res) {
 
 app.post('/', function (req, res) {
     res.render('index.ejs');
+    console.log('first')
     GetWeather(req.body.city);
 })
 
@@ -28,21 +30,20 @@ app.listen(3000, function () {
  * Function that will get the weather information returned by the api
  */
 function GetWeather(city: string)
-{   
+{
     let options: RequestOptions =
     {
         host: 'api.openweathermap.org',
         path: `/data/2.5/weather?q=${city}${apiKey}`,
         method: 'GET',
-        headers: 
-        {
-            'Content': 'application/json'
-        }
+        port: 443
     };
 
     try
     {
-        https.request(options, function(res) {
+        console.log('asdhasd')
+        var req = https.request(options, function(res) {
+            console.log('thing')
             res.setEncoding('utf-8');
         
             let responseString = '';
@@ -56,6 +57,8 @@ function GetWeather(city: string)
                 let responseObject = JSON.parse(responseString);
             });
         });
+
+        req.end();
     }
     catch(e)
     {
